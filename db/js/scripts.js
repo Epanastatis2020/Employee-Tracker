@@ -227,7 +227,45 @@ async function viewEmployeesByManager() {
 // Function to view the budget of a department (i.e. combined salaries)
 //----------------------------------------------------------------------
 
-async function viewBudgetByDepartment() {}
+async function viewBudgetByDepartment() {
+  const query = `SELECT dep_id AS value, name AS name FROM departments ORDER BY dep_id`;
+  connection.query(query, function (err, res) {
+    if (err) {
+      console.log(err);
+    }
+    inquirer
+      .prompt([
+        {
+          type: "rawlist",
+          name: "department",
+          message: "Select Department",
+          choices: res,
+        },
+      ])
+      .then((answer) => {
+        let chosenDepartment = answer.department;
+        const query =
+          "SELECT salary FROM roles JOIN employees ON roles.rol_id=employees.role_id JOIN departments ON roles.department_id=departments.dep_id WHERE ? ORDER BY rol_id";
+        connection.query(query, { dep_id: chosenDepartment }, function (
+          err,
+          res
+        ) {
+          if (err) {
+            console.log(err);
+          }
+          let budget = 0;
+          res.forEach((emp) => {
+            budget += emp.salary;
+          });
+          console.log("\n");
+          console.log(`The total budged for this department is ${budget}`);
+          console.log("\n");
+          showMenu();
+        });
+      })
+      .catch((error) => console.error(error));
+  });
+}
 
 //------------------------------------------------
 // Function to add an employee
