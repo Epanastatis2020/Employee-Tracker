@@ -177,9 +177,13 @@ async function viewEmployeesByManager() {
         },
       ])
       .then((answer) => {
+        let chosenManager = answer.manager;
         const query =
           "SELECT * FROM employees JOIN roles ON employees.role_id=roles.rol_id JOIN departments ON roles.department_id=departments.dep_id WHERE ? ORDER BY emp_id";
-        connection.query(query, { manager_id: answer }, function (err, res) {
+        connection.query(query, { manager_id: chosenManager }, function (
+          err,
+          res
+        ) {
           if (err) {
             console.log(err);
           }
