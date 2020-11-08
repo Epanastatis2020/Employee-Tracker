@@ -91,7 +91,7 @@ async function showMenu() {
 
 async function viewEmployees() {
   const query =
-    "SELECT * FROM employees JOIN roles ON employees.role_id=roles.id JOIN departments ON roles.department_id=departments.id ORDER BY employees.id";
+    "SELECT * FROM employees JOIN roles ON employees.role_id=roles.rol_id JOIN departments ON roles.department_id=departments.dep_id ORDER BY employees.emp_id";
   connection.query(query, function (err, res) {
     if (err) {
       console.log(err);
@@ -99,10 +99,10 @@ async function viewEmployees() {
     let employeeArray = [];
     for (let i = 0; i < res.length; i++) {
       let employee = {
-        ID: res[i].employee_id,
+        ID: res[i].emp_id,
         Name: res[i].first_name + " " + res[i].last_name,
         Title: res[i].title,
-        Department: res[i].department,
+        Department: res[i].dep_id,
         Salary: res[i].salary,
         Manager: res[i].manager_id
           ? res[res[i].manager_id - 1].first_name +
