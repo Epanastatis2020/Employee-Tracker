@@ -89,6 +89,10 @@ async function showMenu() {
     });
 }
 
+//------------------------------------------------
+// Function to view all employees
+//------------------------------------------------
+
 async function viewEmployees() {
   const query =
     "SELECT * FROM employees JOIN roles ON employees.role_id=roles.rol_id JOIN departments ON roles.department_id=departments.dep_id ORDER BY employees.emp_id";
@@ -118,6 +122,10 @@ async function viewEmployees() {
   });
 }
 
+//------------------------------------------------
+// Function to view all departments
+//------------------------------------------------
+
 async function viewDepartments() {
   const query = "SELECT * FROM departments ORDER BY departments.dep_id";
   connection.query(query, function (err, res) {
@@ -137,6 +145,10 @@ async function viewDepartments() {
     showMenu();
   });
 }
+
+//------------------------------------------------
+// Function to view all roles
+//------------------------------------------------
 
 async function viewRoles() {
   const query =
@@ -160,6 +172,10 @@ async function viewRoles() {
     showMenu();
   });
 }
+
+//---------------------------------------------------
+// Function to view all employees filtered by manager
+//---------------------------------------------------
 
 async function viewEmployeesByManager() {
   const query = `SELECT emp_id AS value, CONCAT(first_name, " ", last_name) AS name FROM employees WHERE employees.manager_id IS NULL ORDER BY emp_id`;
@@ -207,16 +223,44 @@ async function viewEmployeesByManager() {
   });
 }
 
+//----------------------------------------------------------------------
+// Function to view the budget of a department (i.e. combined salaries)
+//----------------------------------------------------------------------
+
 async function viewBudgetByDepartment() {}
+
+//------------------------------------------------
+// Function to add an employee
+//------------------------------------------------
 
 async function addEmployee() {}
 
+//------------------------------------------------
+// Function to add a role
+//------------------------------------------------
+
 async function addRole() {}
+
+//------------------------------------------------
+// Function to add a department
+//------------------------------------------------
 
 async function addDepartment() {}
 
+//------------------------------------------------
+// Function to update the details of an employee
+//------------------------------------------------
+
 async function updateEmployeeRole() {}
 
+//-------------------------------------------------------------
+// Function to update which manager an employee is assigned to
+//-------------------------------------------------------------
+
 async function updateEmployeeManager() {}
+
+//------------------------------------------------
+// Function to delete an employee
+//------------------------------------------------
 
 async function deleteEmployee() {}
