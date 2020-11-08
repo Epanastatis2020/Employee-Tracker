@@ -162,29 +162,24 @@ async function viewRoles() {
 }
 
 async function viewEmployeesByManager() {
-  const query =
-    "SELECT employees.emp_id, employees.first_name, employees.last_name FROM employees WHERE employees.manager_id IS NULL";
+  const query = `SELECT emp_id AS value, CONCAT(first_name, " ", last_name) AS name FROM employees WHERE employees.manager_id IS NULL ORDER BY emp_id`;
   connection.query(query, function (err, res) {
     if (err) {
       console.log(err);
     }
-    const managers = res.map((obj) => obj.first_name + " " + obj.last_name);
     inquirer
       .prompt([
         {
           type: "rawlist",
           name: "manager",
           message: "Select Manager",
-          choices: managers,
+          choices: res,
         },
       ])
       .then((answer) => {
         const query =
           "SELECT * FROM employees JOIN roles ON employees.role_id=roles.rol_id JOIN departments ON roles.department_id=departments.dep_id WHERE ? ORDER BY emp_id";
-        connection.query(query, { manager_id: answer.emp_id }, function (
-          err,
-          res
-        ) {
+        connection.query(query, { manager_id: answer }, function (err, res) {
           if (err) {
             console.log(err);
           }
@@ -194,7 +189,7 @@ async function viewEmployeesByManager() {
               ID: res[i].emp_id,
               Name: res[i].first_name + " " + res[i].last_name,
               Title: res[i].title,
-              Department: res[i].department,
+              Department: res[i].dep_id,
               Salary: res[i].salary,
             };
             employeesArray.push(employee);
