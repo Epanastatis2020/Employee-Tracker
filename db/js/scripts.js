@@ -118,11 +118,95 @@ async function viewEmployees() {
   });
 }
 
-async function viewDepartments() {}
+async function viewDepartments() {
+  const query = "SELECT * FROM departments ORDER BY departments.dep_id";
+  connection.query(query, function (err, res) {
+    if (err) {
+      console.log(err);
+    }
+    let departmentsArray = [];
+    for (let i = 0; i < res.length; i++) {
+      let department = {
+        ID: res[i].dep_id,
+        Name: res[i].name,
+      };
+      departmentsArray.push(department);
+    }
+    console.log("\n");
+    console.table(departmentsArray);
+    showMenu();
+  });
+}
 
-async function viewRoles() {}
+async function viewRoles() {
+  const query =
+    "SELECT * FROM roles JOIN departments ON roles.department_id=departments.dep_id ORDER BY roles.rol_id";
+  connection.query(query, function (err, res) {
+    if (err) {
+      console.log(err);
+    }
+    let rolesArray = [];
+    for (let i = 0; i < res.length; i++) {
+      let role = {
+        ID: res[i].rol_id,
+        Role: res[i].title,
+        Salary: res[i].salary,
+        Department: res[i].dep_id,
+      };
+      rolesArray.push(role);
+    }
+    console.log("\n");
+    console.table(rolesArray);
+    showMenu();
+  });
+}
 
-async function viewEmployeesByManager() {}
+async function viewEmployeesByManager() {
+  const query =
+    "SELECT employees.emp_id, employees.first_name, employees.last_name FROM employees WHERE employees.manager_id IS NULL";
+  connection.query(query, function (err, res) {
+    if (err) {
+      console.log(err);
+    }
+    const managers = res.map((obj) => obj.first_name + " " + obj.last_name);
+    inquirer
+      .prompt([
+        {
+          type: "rawlist",
+          name: "manager",
+          message: "Select Manager",
+          choices: managers,
+        },
+      ])
+      .then((answer) => {
+        const query =
+          "SELECT * FROM employees JOIN roles ON employees.role_id=roles.rol_id JOIN departments ON roles.department_id=departments.dep_id WHERE ? ORDER BY emp_id";
+        connection.query(query, { manager_id: answer.emp_id }, function (
+          err,
+          res
+        ) {
+          if (err) {
+            console.log(err);
+          }
+          let employeesArray = [];
+          for (let i = 0; i < res.length; i++) {
+            let employee = {
+              ID: res[i].emp_id,
+              Name: res[i].first_name + " " + res[i].last_name,
+              Title: res[i].title,
+              Department: res[i].department,
+              Salary: res[i].salary,
+            };
+            employeesArray.push(employee);
+          }
+          console.log("\n");
+          console.table(employeesArray);
+          showMenu();
+        });
+      })
+      .catch((error) => console.error(error));
+  });
+}
 
 async function viewBudgetByDepartment() {}
 
@@ -137,5 +221,3 @@ async function updateEmployeeRole() {}
 async function updateEmployeeManager() {}
 
 async function deleteEmployee() {}
-
-module.exports = { viewEmployees };
