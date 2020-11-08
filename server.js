@@ -17,15 +17,7 @@ const scripts = require("./db/js/scripts");
 init();
 
 async function init() {
-  if (connection) {
-    connection.connect((err) => {
-      if (err) throw err;
-      console.log("Connected as id " + connection.threadId);
-      showMenu();
-    });
-  } else {
-    init();
-  }
+  showMenu();
 }
 
 //------------------------------------------------
@@ -58,7 +50,7 @@ async function showMenu() {
     .then(function (answer) {
       switch (answer.task) {
         case "View Employees":
-          viewEmployees();
+          scripts.viewEmployees();
           break;
         case "View Departments":
           viewDepartments();
@@ -91,7 +83,7 @@ async function showMenu() {
           deleteEmployee();
           break;
         case "Exit":
-          connection.end();
+          //connection.end();
           break;
       }
     });

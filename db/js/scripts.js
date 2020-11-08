@@ -63,3 +63,5 @@ async function updateEmployeeRole() {}
 async function updateEmployeeManager() {}
 
 async function deleteEmployee() {}
+
+module.exports = { viewEmployees };
