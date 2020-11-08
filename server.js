@@ -7,7 +7,8 @@ const mysql = require("mysql");
 //------------------------------------------------
 // Setting internal dependencies
 //------------------------------------------------
-const connection = require("./data/connection");
+const connection = require("./lib/connection");
+const scripts = require("./db/js/scripts");
 
 //------------------------------------------------
 // Initialiser
