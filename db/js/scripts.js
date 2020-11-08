@@ -9,7 +9,7 @@ const cTable = require("console.table");
 // Setting internal dependencies
 //------------------------------------------------
 const connection = require("../../lib/connection");
-const showMenu = require("../../server");
+const server = require("../../server");
 
 //------------------------------------------------
 // Functions
@@ -17,7 +17,7 @@ const showMenu = require("../../server");
 
 async function viewEmployees() {
   const query =
-    "SELECT * FROM employees JOIN roles ON employees.role_id=roles.role_id JOIN departments ON roles.department_id=departments.department_id ORDER BY employee_id";
+    "SELECT * FROM employees JOIN roles ON employees.role_id=roles.id JOIN departments ON roles.department_id=departments.id ORDER BY employees.id";
   connection.query(query, function (err, res) {
     if (err) {
       console.log(err);
@@ -40,7 +40,7 @@ async function viewEmployees() {
     }
     console.log("\n");
     console.table(employeeArray);
-    showMenu();
+    serverJS.showMenu();
   });
 }
 

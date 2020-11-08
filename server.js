@@ -83,7 +83,7 @@ async function showMenu() {
           deleteEmployee();
           break;
         case "Exit":
-          //connection.end();
+          connection.end();
           break;
       }
     });
