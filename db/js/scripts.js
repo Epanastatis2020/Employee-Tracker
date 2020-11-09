@@ -548,7 +548,43 @@ async function updateEmployeeRole() {
 // Function to update which manager an employee is assigned to
 //-------------------------------------------------------------
 
-async function updateEmployeeManager() {}
+async function updateEmployeeManager() {
+  inquirer
+    .prompt([
+      {
+        type: "list",
+        name: "emp_id",
+        message: "Choose the employee whose role you want to update \n",
+        choices: await employeeArray(),
+        pageSize: 15,
+      },
+      {
+        type: "list",
+        name: "manager_id",
+        message: "Choose the employee's new manager \n",
+        choices: await managerArray(),
+        pageSize: 15,
+      },
+    ])
+    .then(async (answer) => {
+      let emp_id = answer.emp_id;
+      let manager_id = answer.manager_id;
+      connection.query(
+        "UPDATE employees SET manager_id=? WHERE emp_id=?",
+        [manager_id, emp_id],
+        function (err, res) {
+          if (err) {
+            console.log(err);
+            console.log("There was a problem updating the employee's manager");
+          }
+          console.log("\n");
+          console.log("You have succesfully updated the employee's manager");
+          console.log("\n");
+          showMenu();
+        }
+      );
+    });
+}
 
 //------------------------------------------------
 // Functions to delete an employee
