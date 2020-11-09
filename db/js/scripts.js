@@ -43,6 +43,8 @@ async function showMenu() {
           "Update Employee's Role",
           "Update Employee's Manager",
           "Delete Employee",
+          "Delete Role",
+          "Delete Department",
           "Exit",
         ],
       },
@@ -81,6 +83,12 @@ async function showMenu() {
           break;
         case "Delete Employee":
           deleteEmployee();
+          break;
+        case "Delete Role":
+          deleteRole();
+          break;
+        case "Delete Department":
+          deleteDepartment();
           break;
         case "Exit":
           connection.end();
@@ -605,6 +613,73 @@ const employeeArray = function () {
 };
 
 //Delete employee function
+async function deleteEmployee() {
+  inquirer
+    .prompt([
+      {
+        type: "list",
+        name: "emp_id",
+        message: "Choose the employee you want to delete from the database\n",
+        choices: await employeeArray(),
+        pageSize: 15,
+      },
+    ])
+    .then((answer) => {
+      let emp_id = answer.emp_id;
+      connection.query(
+        "DELETE FROM employees WHERE emp_id=?",
+        [emp_id],
+        function (err, res) {
+          if (err) {
+            console.log(err);
+            console.log("There was a problem deleting the record");
+          }
+          console.log("\n");
+          console.log("You have succesfully deleted the employee record");
+          console.log("\n");
+          showMenu();
+        }
+      );
+    });
+}
+
+//------------------------------------------------
+// Function to delete a roll
+//------------------------------------------------
+
+async function deleteRole() {
+  inquirer
+    .prompt([
+      {
+        type: "list",
+        name: "rol_id",
+        message: "Choose the role you want to delete from the database\n",
+        choices: await roleArray(),
+        pageSize: 15,
+      },
+    ])
+    .then((answer) => {
+      let rol_id = answer.rol_id;
+      connection.query("DELETE FROM roles WHERE rol_id=?", [rol_id], function (
+        err,
+        res
+      ) {
+        if (err) {
+          console.log(err);
+          console.log("There was a problem deleting the record");
+        }
+        console.log("\n");
+        console.log("You have succesfully deleted the role");
+        console.log("\n");
+        showMenu();
+      });
+    });
+}
+
+//------------------------------------------------
+// Function to delete a department
+//------------------------------------------------
+
 async function deleteEmployee() {
   inquirer
     .prompt([
