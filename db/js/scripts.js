@@ -377,11 +377,11 @@ async function addEmployee() {
         function (err, res) {
           if (err) {
             console.log(err);
+            console.log("There was a problem adding the new employee");
           }
           console.log("\n");
-          console.log("You have succesfully added the following employee:");
+          console.log("You have succesfully added the new employee");
           console.log("\n");
-          console.table(res);
           showMenu();
         }
       );
@@ -389,16 +389,117 @@ async function addEmployee() {
 }
 
 //------------------------------------------------
-// Function to add a role
+// Functions to add a role
 //------------------------------------------------
 
-async function addRole() {}
+//Get Departments array
+const departmentQuery = `SELECT dep_id AS value, name AS name FROM departments ORDER BY dep_id`;
+const departmentArray = function () {
+  return new Promise(function (resolve, reject) {
+    connection.query(departmentQuery, function (err, res) {
+      if (err) {
+        console.log(err);
+        reject(err);
+      }
+      resolve(res);
+    });
+  });
+};
+
+async function addRole() {
+  inquirer
+    .prompt([
+      {
+        type: "list",
+        name: "dep_id",
+        message: "Choose the department you want the role created for\n",
+        choices: await departmentArray(),
+        pageSize: 10,
+      },
+      {
+        type: "input",
+        name: "title",
+        message: "Enter the title of the role: ",
+        validate: function (value) {
+          const pass = value.match(/^[a-zA-Z\s]+$/i);
+          if (pass) {
+            return true;
+          }
+          return "Please enter a valid title (Upper case, lower case characters and spaces only).";
+        },
+      },
+      {
+        type: "input",
+        name: "salary",
+        message: "What is the renumeration for this role?\n",
+        validate: function (value) {
+          const pass = value.match(/^[0-9]+$/i);
+          if (pass) {
+            return true;
+          }
+          return "Please enter a valid amount (numeric characters only).";
+        },
+      },
+    ])
+    .then(async (answer) => {
+      let dep_id = answer.dep_id;
+      let title = answer.title;
+      let salary = answer.salary;
+      connection.query(
+        "INSERT INTO roles (department_id, title, salary) VALUES (?, ?, ?)",
+        [dep_id, title, salary],
+        function (err, res) {
+          if (err) {
+            console.log(err);
+            console.log("There was a problem creating the role");
+          }
+          console.log("\n");
+          console.log("You have succesfully added the role");
+          console.log("\n");
+          showMenu();
+        }
+      );
+    });
+}
 
 //------------------------------------------------
 // Function to add a department
 //------------------------------------------------
 
-async function addDepartment() {}
+async function addDepartment() {
+  inquirer
+    .prompt([
+      {
+        type: "input",
+        name: "name",
+        message: "Enter the name of the department: ",
+        validate: function (value) {
+          const pass = value.match(/^[a-zA-Z\s]+$/i);
+          if (pass) {
+            return true;
+          }
+          return "Please enter a valid name (Upper case, lower case characters and spaces only).";
+        },
+      },
+    ])
+    .then(async (answer) => {
+      let name = answer.name;
+      connection.query(
+        "INSERT INTO departments (name) VALUES (?)",
+        [name],
+        function (err, res) {
+          if (err) {
+            console.log(err);
+            console.log("There was a problem creating the department");
+          }
+          console.log("\n");
+          console.log("You have succesfully added the department");
+          console.log("\n");
+          showMenu();
+        }
+      );
+    });
+}
 
 //------------------------------------------------
 // Function to update the details of an employee
