@@ -98,6 +98,66 @@ async function showMenu() {
 }
 
 //------------------------------------------------
+// Functions to create arrays of necessary tables
+//------------------------------------------------
+
+//Get Roles array
+const roleQuery = `SELECT rol_id AS value, title AS name FROM roles ORDER BY rol_id`;
+const roleArray = function () {
+  return new Promise(function (resolve, reject) {
+    connection.query(roleQuery, function (err, res) {
+      if (err) {
+        console.log(err);
+        reject(err);
+      }
+      resolve(res);
+    });
+  });
+};
+
+//Get Managers array
+const managerQuery = `SELECT emp_id AS value, CONCAT(first_name, " ", last_name) AS name FROM employees WHERE ISNULL(manager_id) ORDER BY emp_id`;
+const managerArray = function () {
+  return new Promise(function (resolve, reject) {
+    connection.query(managerQuery, function (err, res) {
+      if (err) {
+        console.log(err);
+        reject(err);
+      }
+      resolve(res);
+    });
+  });
+};
+
+//Get Departments array
+const departmentQuery = `SELECT dep_id AS value, name AS name FROM departments ORDER BY dep_id`;
+const departmentArray = function () {
+  return new Promise(function (resolve, reject) {
+    connection.query(departmentQuery, function (err, res) {
+      if (err) {
+        console.log(err);
+        reject(err);
+      }
+      resolve(res);
+    });
+  });
+};
+
+//Get Employees array
+const employeeQuery = `SELECT emp_id AS value, CONCAT(first_name, " ", last_name) AS name FROM employees ORDER BY emp_id`;
+const employeeArray = function () {
+  return new Promise(function (resolve, reject) {
+    connection.query(employeeQuery, function (err, res) {
+      if (err) {
+        console.log(err);
+        reject(err);
+      }
+      resolve(res);
+    });
+  });
+};
+
+//------------------------------------------------
 // Function to view all employees
 //------------------------------------------------
 
@@ -276,38 +336,9 @@ async function viewBudgetByDepartment() {
 }
 
 //------------------------------------------------
-// Functions to add an employee
+// Function to add an employee
 //------------------------------------------------
 
-//Get Roles array
-const roleQuery = `SELECT rol_id AS value, title AS name FROM roles ORDER BY rol_id`;
-const roleArray = function () {
-  return new Promise(function (resolve, reject) {
-    connection.query(roleQuery, function (err, res) {
-      if (err) {
-        console.log(err);
-        reject(err);
-      }
-      resolve(res);
-    });
-  });
-};
-
-//Get Managers array
-const managerQuery = `SELECT emp_id AS value, CONCAT(first_name, " ", last_name) AS name FROM employees WHERE ISNULL(manager_id) ORDER BY emp_id`;
-const managerArray = function () {
-  return new Promise(function (resolve, reject) {
-    connection.query(managerQuery, function (err, res) {
-      if (err) {
-        console.log(err);
-        reject(err);
-      }
-      resolve(res);
-    });
-  });
-};
-
-//Add employee function
 async function addEmployee() {
   let managerChoices = await managerArray();
   inquirer
@@ -397,24 +428,9 @@ async function addEmployee() {
 }
 
 //------------------------------------------------
-// Functions to add a role
+// Function to add a role
 //------------------------------------------------
 
-//Get Departments array
-const departmentQuery = `SELECT dep_id AS value, name AS name FROM departments ORDER BY dep_id`;
-const departmentArray = function () {
-  return new Promise(function (resolve, reject) {
-    connection.query(departmentQuery, function (err, res) {
-      if (err) {
-        console.log(err);
-        reject(err);
-      }
-      resolve(res);
-    });
-  });
-};
-
-//Add role function
 async function addRole() {
   inquirer
     .prompt([
@@ -595,24 +611,9 @@ async function updateEmployeeManager() {
 }
 
 //------------------------------------------------
-// Functions to delete an employee
+// Function to delete an employee
 //------------------------------------------------
 
-//Get Employees array
-const employeeQuery = `SELECT emp_id AS value, CONCAT(first_name, " ", last_name) AS name FROM employees ORDER BY emp_id`;
-const employeeArray = function () {
-  return new Promise(function (resolve, reject) {
-    connection.query(employeeQuery, function (err, res) {
-      if (err) {
-        console.log(err);
-        reject(err);
-      }
-      resolve(res);
-    });
-  });
-};
-
-//Delete employee function
 async function deleteEmployee() {
   inquirer
     .prompt([
