@@ -3,6 +3,7 @@ USE employee_trackerDB;
 
 /* Create table with id that auto increments, first name, last name, */ 
 /* reference to their role id, reference to their manager id */
+CREATE TABLE employees (
     emp_id INT NOT NULL AUTO_INCREMENT,
     first_name VARCHAR(30) NOT NULL,
     last_name VARCHAR(30) NOT NULL,

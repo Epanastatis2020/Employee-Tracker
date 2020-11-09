@@ -53,4 +53,4 @@ INSERT INTO employees (emp_id, first_name, last_name, role_id, manager_id)
 VALUES (6, "Natalia", "Karas", 6, 5);
 
 INSERT INTO employees (emp_id, first_name, last_name, role_id, manager_id)
-VALUES (7, "Omar", "Chandia", 6, 5);
+VALUES (7, "Omar", "Chandia", 7, 5);

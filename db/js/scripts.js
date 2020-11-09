@@ -342,27 +342,38 @@ async function addEmployee() {
         default: "true",
       },
     ])
-    .then((answer) => {
-      if (answer.manager_choice === true) {
-        inquirer.prompt([
-          {
-            type: "list",
-            name: "manager_id",
-            message: "Choose the employee's manager:\n",
-            choices: managerChoices,
-            pageSize: 10,
-          },
-        ]);
-      }
+    .then(async (answer) => {
       let firstName = answer.first_name;
       let lastName = answer.last_name;
       let chosenRole = answer.role_id;
-      let chosenManager = answer.manager_id;
-      const query =
-        "INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)";
+      let chosenManager = null;
+      if (answer.manager_choice === true) {
+        await inquirer
+          .prompt([
+            {
+              type: "list",
+              name: "manager_id",
+              message: "Choose the employee's manager:\n",
+              choices: managerChoices,
+              pageSize: 10,
+            },
+          ])
+          .then((answer) => {
+            chosenManager = answer.manager_id;
+            return chosenManager;
+          });
+      }
+      let firstAnswer = { firstName, lastName, chosenRole, chosenManager };
+      return firstAnswer;
+    })
+    .then((firstAnswer) => {
+      let queryFirstName = firstAnswer.firstName;
+      let queryLastName = firstAnswer.lastName;
+      let queryChosenRole = firstAnswer.chosenRole;
+      let queryChosenManager = firstAnswer.chosenManager;
       connection.query(
-        query,
-        [firstName, lastName, chosenRole, chosenManager],
+        "INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)",
+        [queryFirstName, queryLastName, queryChosenRole, queryChosenManager],
         function (err, res) {
           if (err) {
             console.log(err);
@@ -374,8 +385,7 @@ async function addEmployee() {
           showMenu();
         }
       );
-    })
-    .catch((error) => console.error(error));
+    });
 }
 
 //------------------------------------------------
