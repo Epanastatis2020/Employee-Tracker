@@ -17,7 +17,34 @@ const connection = require("../../lib/connection");
 init();
 
 async function init() {
+  welcomeScreen();
   showMenu();
+}
+
+//------------------------------------------------
+// Welcome Message
+//------------------------------------------------
+
+function welcomeScreen() {
+  const welcomeMessage = `
+  
+  ***************************************************
+  |                                                 |
+  |                 Employee-Tracker                |
+  |                                                 |
+  ***************************************************
+  
+  * This command-line application will allow a user *
+  * to view, add, update or delete various records  *
+  * in a CMS, such as employees, roles departments  *
+  * or assigned manager. I hope you enjoy it!       *
+
+  `;
+
+  console.clear();
+  console.log("\n");
+  console.log(welcomeMessage);
+  console.log("\n");
 }
 
 //------------------------------------------------
