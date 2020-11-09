@@ -4,7 +4,6 @@
 const inquirer = require("inquirer");
 const mysql = require("mysql");
 const cTable = require("console.table");
-const util = require("util");
 
 //------------------------------------------------
 // Setting internal dependencies
@@ -274,98 +273,109 @@ async function viewBudgetByDepartment() {
 
 //Get Roles array
 const roleQuery = `SELECT rol_id AS value, title AS name FROM roles ORDER BY rol_id`;
-const roleArray = async () => {
-  connection.query(roleQuery, function (err, res) {
-    if (err) {
-      console.log(err);
-    }
-    const roleResult = util.promisify(res);
-    return roleResult;
+const roleArray = function () {
+  return new Promise(function (resolve, reject) {
+    connection.query(roleQuery, function (err, res) {
+      if (err) {
+        console.log(err);
+        reject(err);
+      }
+      resolve(res);
+    });
   });
 };
 
 //Get Managers array
 const managerQuery = `SELECT emp_id AS value, CONCAT(first_name, " ", last_name) AS name FROM employees WHERE ISNULL(manager_id) ORDER BY emp_id`;
-const managerArray = async () => {
-  connection.query(managerQuery, function (err, res) {
-    if (err) {
-      console.log(err);
-    }
-    const managerResult = util.promisify(res);
-    return managerResult;
+const managerArray = function () {
+  return new Promise(function (resolve, reject) {
+    connection.query(managerQuery, function (err, res) {
+      if (err) {
+        console.log(err);
+        reject(err);
+      }
+      resolve(res);
+    });
   });
 };
 
 //Add employee function
 async function addEmployee() {
   let managerChoices = await managerArray();
-  let roleChoices = await roleArray();
-  console.log(managerChoices);
-  console.log(roleChoices);
-  // inquirer
-  //   .prompt([
-  //     {
-  //       type: "input",
-  //       name: "first_name",
-  //       message: "Enter the employee's first name: ",
-  //       validate: function (value) {
-  //         const pass = value.match(/^[a-zA-Z\s]+$/i);
-  //         if (pass) {
-  //           return true;
-  //         }
-  //         return "Please enter a valid name (Upper case, lower case characters and spaces only).";
-  //       },
-  //     },
-  //     {
-  //       type: "input",
-  //       name: "last_name",
-  //       message: "Enter the employee's last name: ",
-  //       validate: function (value) {
-  //         const pass = value.match(/^[a-zA-Z\s]+$/i);
-  //         if (pass) {
-  //           return true;
-  //         }
-  //         return "Please enter a valid name (Upper case, lower case characters and spaces only).";
-  //       },
-  //     },
-  //     {
-  //       type: "list",
-  //       name: "role_id",
-  //       message: "Choose the employee's role:\n",
-  //       choices: await roleArray(),
-  //       pageSize: 12,
-  //     },
-  //     {
-  //       type: "list",
-  //       name: "manager_id",
-  //       message: "Choose the employee's manager:\n",
-  //       choices: await managerArray(),
-  //       pageSize: 10,
-  //     },
-  //   ])
-  //   .then((answer) => {
-  //     let firstName = answer.first_name;
-  //     let lastName = answer.last_name;
-  //     let chosenManager = answer.manager_id;
-  //     let chosenRole = answer.role_id;
-  //     const query =
-  //       "INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)";
-  //     connection.query(
-  //       query,
-  //       [firstName, lastName, chosenRole, chosenManager],
-  //       function (err, res) {
-  //         if (err) {
-  //           console.log(err);
-  //         }
-  //         console.log("\n");
-  //         console.log("You have succesfully added the following employee:");
-  //         console.log("\n");
-  //         console.table(res);
-  //         showMenu();
-  //       }
-  //     );
-  //   })
-  //   .catch((error) => console.error(error));
+  inquirer
+    .prompt([
+      {
+        type: "input",
+        name: "first_name",
+        message: "Enter the employee's first name: ",
+        validate: function (value) {
+          const pass = value.match(/^[a-zA-Z\s]+$/i);
+          if (pass) {
+            return true;
+          }
+          return "Please enter a valid name (Upper case, lower case characters and spaces only).";
+        },
+      },
+      {
+        type: "input",
+        name: "last_name",
+        message: "Enter the employee's last name: ",
+        validate: function (value) {
+          const pass = value.match(/^[a-zA-Z\s]+$/i);
+          if (pass) {
+            return true;
+          }
+          return "Please enter a valid name (Upper case, lower case characters and spaces only).";
+        },
+      },
+      {
+        type: "list",
+        name: "role_id",
+        message: "Choose the employee's role:\n",
+        choices: await roleArray(),
+        pageSize: 12,
+      },
+      {
+        type: "confirm",
+        name: "manager_choice",
+        message: "Does this employee have a manager?:\n",
+        default: "true",
+      },
+    ])
+    .then((answer) => {
+      if (answer.manager_choice === true) {
+        inquirer.prompt([
+          {
+            type: "list",
+            name: "manager_id",
+            message: "Choose the employee's manager:\n",
+            choices: managerChoices,
+            pageSize: 10,
+          },
+        ]);
+      }
+      let firstName = answer.first_name;
+      let lastName = answer.last_name;
+      let chosenRole = answer.role_id;
+      let chosenManager = answer.manager_id;
+      const query =
+        "INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)";
+      connection.query(
+        query,
+        [firstName, lastName, chosenRole, chosenManager],
+        function (err, res) {
+          if (err) {
+            console.log(err);
+          }
+          console.log("\n");
+          console.log("You have succesfully added the following employee:");
+          console.log("\n");
+          console.table(res);
+          showMenu();
+        }
+      );
+    })
+    .catch((error) => console.error(error));
 }
 
 //------------------------------------------------
