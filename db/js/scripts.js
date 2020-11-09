@@ -406,6 +406,7 @@ const departmentArray = function () {
   });
 };
 
+//Add role function
 async function addRole() {
   inquirer
     .prompt([
@@ -514,7 +515,50 @@ async function updateEmployeeRole() {}
 async function updateEmployeeManager() {}
 
 //------------------------------------------------
-// Function to delete an employee
+// Functions to delete an employee
 //------------------------------------------------
 
-async function deleteEmployee() {}
+//Get Employees array
+const employeeQuery = `SELECT emp_id AS value, CONCAT(first_name, " ", last_name) AS name FROM employees ORDER BY emp_id`;
+const employeeArray = function () {
+  return new Promise(function (resolve, reject) {
+    connection.query(employeeQuery, function (err, res) {
+      if (err) {
+        console.log(err);
+        reject(err);
+      }
+      resolve(res);
+    });
+  });
+};
+
+//Delete employee function
+async function deleteEmployee() {
+  inquirer
+    .prompt([
+      {
+        type: "list",
+        name: "emp_id",
+        message: "Choose the employee you want to delete from the database\n",
+        choices: await employeeArray(),
+        pageSize: 15,
+      },
+    ])
+    .then((answer) => {
+      let emp_id = answer.emp_id;
+      connection.query(
+        "DELETE FROM employees WHERE emp_id=?",
+        [emp_id],
+        function (err, res) {
+          if (err) {
+            console.log(err);
+            console.log("There was a problem deleting the record");
+          }
+          console.log("\n");
+          console.log("You have succesfully deleted the employee record");
+          console.log("\n");
+          showMenu();
+        }
+      );
+    });
+}
