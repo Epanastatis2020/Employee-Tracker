@@ -506,7 +506,43 @@ async function addDepartment() {
 // Function to update the details of an employee
 //------------------------------------------------
 
-async function updateEmployeeRole() {}
+async function updateEmployeeRole() {
+  inquirer
+    .prompt([
+      {
+        type: "list",
+        name: "emp_id",
+        message: "Choose the employee whose role you want to update \n",
+        choices: await employeeArray(),
+        pageSize: 15,
+      },
+      {
+        type: "list",
+        name: "role_id",
+        message: "Choose the employee's new role \n",
+        choices: await roleArray(),
+        pageSize: 15,
+      },
+    ])
+    .then(async (answer) => {
+      let emp_id = answer.emp_id;
+      let role_id = answer.role_id;
+      connection.query(
+        "UPDATE employees SET role_id=? WHERE emp_id=?",
+        [role_id, emp_id],
+        function (err, res) {
+          if (err) {
+            console.log(err);
+            console.log("There was a problem updating the employee's role");
+          }
+          console.log("\n");
+          console.log("You have succesfully updated the employee's role");
+          console.log("\n");
+          showMenu();
+        }
+      );
+    });
+}
 
 //-------------------------------------------------------------
 // Function to update which manager an employee is assigned to
